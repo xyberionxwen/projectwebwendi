@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieStream - Situs Streaming Film</title>
+    <style>
+        /* Reset dan variabel */
+        :root {
+            --primary-color: #e50914;
+            --secondary-color: #221f1f;
+            --background-color: #141414;
+            --text-color: #ffffff;
+            --card-color: #1a1a1a;
+            --hover-color: #ff0a16;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        /* Header & Navigasi */
+        header {
+            background-color: rgba(0, 0, 0, 0.8);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-box input {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: none;
+            background-color: #333;
+            color: var(--text-color);
+            margin-right: 0.5rem;
+        }
+        
+        .search-box button {
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 80vh;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/api/placeholder/1920/1080');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 60px;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .hero-btn:hover {
+            background-color: var(--hover-color);
+            transform: scale(1.05);
+        }
+        
+        /* Main Content */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        /* Grid películas */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .movie-card {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        
+        .movie-info {
+            padding: 1rem;
+        }
+        
+        .movie-title {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        /* Video Player Page */
+        .video-container {
+            margin-top: 70px;
+            padding: 2rem 0;
+        }
+        
+        .video-player {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .video-player video {
+            width: 100%;
+            display: block;
+        }
+        
+        .video-details {
+            margin-bottom: 2rem;
+        }
+        
+        .video-details h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .video-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            color: #aaa;
+        }
+        
+        .video-description {
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+        
+        /* Related Movies */
+        .related-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--secondary-color);
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .copyright {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .logo {
+                margin-bottom: 1rem;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .nav-links li {
+                margin: 0.5rem 0;
+                text-align: center;
+            }
+            
+            .search-box {
+                margin-top: 1rem;
+                width: 100%;
+            }
+            
+            .search-box input {
+                width: 70%;
+            }
+            
+            .hero {
+                height: auto;
+                padding: 6rem 0 3rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header dengan navigasi -->
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">MovieStream</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="#movies">Film</a></li>
+                <li><a href="#series">Serial TV</a></li>
+                <li><a href="#genres">Genre</a></li>
+            </ul>
+            <div class="search-box">
+                <input type="text" placeholder="Cari film...">
+                <button>Cari</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Streaming Film & Serial TV Terbaru</h1>
+            <p>Tonton film dan serial TV terbaru dengan kualitas HD tanpa buffering, kapanpun dan dimanapun.</p>
+            <a href="#trending" class="hero-btn">Jelajahi Sekarang</a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Trending Movies -->
+        <section id="trending" class="container">
+            <h2 class="section-title">Trending Minggu Ini</h2>
+            <div class="movie-grid">
+                <!-- Movie Card 1 -->
+                <div class="movie-card" onclick="openMovie('movie1')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">Avengers: Endgame</h3>
+                        <div class="movie-meta">
+                            <span>2023</span>
+                            <span>Action, Adventure</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 2 -->
+                <div class="movie-card" onclick="openMovie('movie2')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">Joker</h3>
+                        <div class="movie-meta">
+                            <span>2023</span>
+                            <span>Crime, Drama</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 3 -->
+                <div class="movie-card" onclick="openMovie('movie3')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">Interstellar</h3>
+                        <div class="movie-meta">
+                            <span>2022</span>
+                            <span>Sci-Fi, Drama</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 4 -->
+                <div class="movie-card" onclick="openMovie('movie4')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">The Dark Knight</h3>
+                        <div class="movie-meta">
+                            <span>2008</span>
+                            <span>Action, Crime</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 5 -->
+                <div class="movie-card" onclick="openMovie('movie5')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">Inception</h3>
+                        <div class="movie-meta">
+                            <span>2010</span>
+                            <span>Sci-Fi, Action</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 6 -->
+                <div class="movie-card" onclick="openMovie('movie6')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">Parasite</h3>
+                        <div class="movie-meta">
+                            <span>2019</span>
+                            <span>Thriller, Drama</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Latest Movies -->
+        <section id="latest" class="container">
+            <h2 class="section-title">Film Terbaru</h2>
+            <div class="movie-grid">
+                <!-- Movie Card 1 -->
+                <div class="movie-card" onclick="openMovie('new1')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">Dune</h3>
+                        <div class="movie-meta">
+                            <span>2023</span>
+                            <span>Sci-Fi, Adventure</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 2 -->
+                <div class="movie-card" onclick="openMovie('new2')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">No Time to Die</h3>
+                        <div class="movie-meta">
+                            <span>2023</span>
+                            <span>Action, Thriller</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 3 -->
+                <div class="movie-card" onclick="openMovie('new3')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">Black Widow</h3>
+                        <div class="movie-meta">
+                            <span>2023</span>
+                            <span>Action, Adventure</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 4 -->
+                <div class="movie-card" onclick="openMovie('new4')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">A Quiet Place Part II</h3>
+                        <div class="movie-meta">
+                            <span>2023</span>
+                            <span>Horror, Thriller</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 5 -->
+                <div class="movie-card" onclick="openMovie('new5')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">The Suicide Squad</h3>
+                        <div class="movie-meta">
+                            <span>2023</span>
+                            <span>Action, Adventure</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 6 -->
+                <div class="movie-card" onclick="openMovie('new6')">
+                    <img src="/api/placeholder/400/600" alt="Movie Poster" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">Free Guy</h3>
+                        <div class="movie-meta">
+                            <span>2023</span>
+                            <span>Comedy, Action</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">Tentang Kami</a>
+                <a href="#">Syarat dan Ketentuan</a>
+                <a href="#">Kebijakan Privasi</a>
+                <a href="#">Hubungi Kami</a>
+            </div>
+            <p class="copyright">© 2025 MovieStream. Hak Cipta Dilindungi.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Fungsi untuk membuka halaman detail film dan memutar video
+        function openMovie(movieId) {
+            // Simpan ID film di localStorage (untuk simulasi sistem)
+            localStorage.setItem('currentMovie', movieId);
+            
+            // Arahkan ke halaman player video
+            window.location.href = 'player.html';
+        }
+    </script>
+</body>
+</html>
